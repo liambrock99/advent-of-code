@@ -14,14 +14,45 @@ func main() {
 		log.Fatal(err)
 	}
 	input := strings.Split(string(file), "\r\n")
-	highest := 0
+	existing := []int{}
+	possible := []int{}
+	max := 127 * 8 + 7
+
 	for _, s := range input {
 		sid := decode([]rune(s))
+		existing = append(existing, sid)
+	}
+ 
+	for i := 0; i <= max; i++ {
+		// see if i matches any input SID
+		if !exists(i, existing) {
+			// see if SID i + 1 and i - 1 exist
+			if exists(i + 1, existing) && exists(i - 1, existing) {
+				possible = append(possible, i)
+			}
+		}
+	}
+
+	fmt.Printf("Yoru boarding pass is %d\n", possible)
+
+		
+
+	highest := 0
+	for _, sid := range existing {
 		if sid > highest {
 			highest = sid
 		}
 	}
-	fmt.Printf("The highest seat ID is %d", highest)
+	fmt.Printf("The highest seat ID is %d\n", highest)
+}
+
+func exists(i int, ints []int) bool {
+	for _, n := range ints {
+		if i == n {
+			return true
+		}
+	}
+	return false
 }
 
 // returns new upper bound
